@@ -1,0 +1,34 @@
+---
+
+elasticsearch_docker_image: registry.smartdigits.io/infra/elasticsearch
+elasticsearch_docker_tag: 7.2.0
+elasticsearch_docker_container_user_uid: 1000
+elasticsearch_docker_container_group_uid: 1000
+elasticsearch_security_enabled: true
+elasticsearch_security_transport_enabled: true
+elasticsearch_security_http_enabled: true
+elasticsearch_security_auth_ldap_hosts:
+  - "ldap://replicahi.hi.inet:389"
+elasticsearch_security_auth_ldap_base_dn: "o=TID"
+elasticsearch_security_auth_ldap_role_mapping_unmapped_groups_as_roles: 'false'
+elasticsearch_security_auth_ldap_role_mapping_file: /usr/share/elasticsearch/config/role_mapping.yml
+elasticsearch_data_dir: /var/dockershared/elasticsearch/data
+elasticsearch_config_dir: /var/dockershared/elasticsearch/config
+elasticsearch_cluster_name: clustermicro
+elasticsearch_cluster_group: elasticsearch
+elasticsearch_network_port: 9200
+elasticsearch_network_name: DOCKER_BACKEND
+elasticsearch_license_enabled: true
+elasticsearch_certificate_dir: /var/dockershared/elasticsearch/certs
+elasticsearch_certificate_ca_file_key: ESca.key
+elasticsearch_certificate_ca_file_ingest: ESca.crt
+elasticsearch_certificate_ca_file_monitoring: ESMONca.crt
+elasticsearch_certificate_instance_file_key: instance.key 
+elasticsearch_certificate_instance_file_csr: instance.csr
+elasticsearch_certificate_instance_file_crt: instance.crt
+elasticsearch_users_create: true
+elasticsearch_users_file: users/definition.yml
+elasticsearch_roles_create: true
+elasticsearch_roles_file: roles/definition.yml
+elasticsearch_secrets_file: vault/secrets.yml
+elasticsearch_local_certificates_dir: files/elasticsearch/certificates

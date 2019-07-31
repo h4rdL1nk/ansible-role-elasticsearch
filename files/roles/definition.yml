@@ -1,0 +1,33 @@
+---
+
+roles:
+  - fluentd_role:
+      cluster:
+        - monitor
+        - manage_index_templates
+      indices:
+        - names:
+            - 'logstash*'
+          privileges:
+            - all
+          field_security:
+            grant:
+              - '*'
+      metadata:
+        version: 1
+
+  - filebeat_writter:
+      cluster:
+        - monitor
+        - manage_index_templates
+        - manage_ilm
+      indices:
+        - names:
+            - 'filebeat*'
+          privileges:
+            - manage
+            - read
+            - write
+            - create_index
+      metadata:
+        version: 1

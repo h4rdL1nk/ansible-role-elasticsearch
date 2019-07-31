@@ -1,0 +1,9 @@
+---
+
+users:
+  filebeat_writter:
+    password: tckTHOXugBr3X9F9
+    roles:
+      - filebeat_writter
+    full_name: Filebeat log forwarder
+    email: test@dummy.es

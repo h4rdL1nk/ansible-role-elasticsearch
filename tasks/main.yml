@@ -1,0 +1,176 @@
+---
+
+- name: Configure kernel parameters
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_set: True
+    state: present
+    reload: True
+  with_dict:
+    vm.max_map_count: '262144'
+  register: kernel_params
+
+- name: Create elasticsearch directories
+  file:
+    state: directory
+    path: "{{ item }}"
+    recurse: True
+    owner: "{{ elasticsearch_docker_container_user_uid }}"
+    group: "{{ elasticsearch_docker_container_group_uid }}"
+  with_items:
+    - "{{ elasticsearch_config_dir }}"
+    - "{{ elasticsearch_data_dir }}"
+    - "{{ elasticsearch_certificate_dir }}"
+
+- name: Copy SSL certificates
+  copy:
+    src: certificates/
+    dest: "{{ elasticsearch_certificate_dir  }}/"
+    mode: 0440
+    owner: "{{ elasticsearch_docker_container_user_uid }}"
+    group: "{{ elasticsearch_docker_container_group_uid }}"
+
+- name: Copy role mapping file
+  template:
+    src: role_mapping.j2
+    dest: "{{ elasticsearch_config_dir  }}/role_mapping.yml"
+    owner: "{{ elasticsearch_docker_container_user_uid }}"
+    group: "{{ elasticsearch_docker_container_group_uid }}"
+  register: es_role_mapping
+
+- name: Copy elasticsearch configuration
+  template:
+    src: elasticsearch.j2
+    dest: "{{ elasticsearch_config_dir }}/elasticsearch.yml"
+    owner: "{{ elasticsearch_docker_container_user_uid }}"
+    group: "{{ elasticsearch_docker_container_group_uid }}"
+  register: es_config
+
+# Setup passwords
+#docker exec -it smd_infra_elastic bin/elasticsearch-setup-passwords auto -b
+
+- name: Create elasticsearch keystore
+  command: "docker run --rm -i -v {{ elasticsearch_config_dir }}:/usr/share/elasticsearch/config:rw,Z -v {{ elasticsearch_config_dir }}/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z {{ elasticsearch_docker_image }}:{{ elasticsearch_docker_tag   }} elasticsearch-keystore create"
+  args:
+    creates: "{{ elasticsearch_config_dir }}/elasticsearch.keystore"
+  register: keystore_create
+
+- name: Load secrets
+  include_vars:
+    file: "{{ lookup('env', 'PWD') }}/{{ elasticsearch_secrets_file|default('vault/secrets.yml')}}"
+
+- name: Add elasticsearch keystore keys
+  command: "docker run --rm -i -v {{ elasticsearch_config_dir }}:/usr/share/elasticsearch/config:rw,Z -v {{ elasticsearch_config_dir }}/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z {{ elasticsearch_docker_image }}:{{ elasticsearch_docker_tag   }} elasticsearch-keystore add --stdin {{ item.key }}"
+  args:
+    stdin: "{{ item.value }}"
+  with_dict: "{{ secrets.elasticsearch.keystore }}"
+  when: keystore_create.changed
+
+- name: Deploy elasticsearch containers
+  docker_container:
+    state: started
+    restart: "{{ es_config.changed or keystore_create.changed or kernel_params.changed }}"
+    #recreate: True
+    name: "smd_infra_elastic"
+    user: root
+    image: "{{ elasticsearch_docker_image }}:{{ elasticsearch_docker_tag }}"
+    detach: true
+    #cpu_quota: '2'
+    #memory: ''
+    ulimits: 
+      - 'memlock:-1:-1'
+    env:
+      node.name: "{{ ansible_hostname }}"
+      #ES_JAVA_OPTS: "-Xms4g -Xmx4g" 
+    restart_policy: unless-stopped
+    log_driver: json-file
+    log_options:
+      max-size: '30m'
+      max-file: '3'
+    labels:
+      SERVICE_TYPE: elasticsearch 
+      SERVICE_OWNER: infra
+      SERVICE_LABEL: "{{ elasticsearch_cluster_name }}"
+    published_ports:
+      - "{{ elasticsearch_network_address }}:{{ elasticsearch_network_port }}:9200"
+      - "{{ elasticsearch_network_address }}:9300:9300"
+    volumes:
+      - "{{ elasticsearch_data_dir }}:/usr/share/elasticsearch/data/:rw,Z"
+      - "{{ elasticsearch_config_dir }}/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z"
+      - "{{ elasticsearch_config_dir }}/elasticsearch.keystore:/usr/share/elasticsearch/config/elasticsearch.keystore:ro,Z"
+      - "{{ elasticsearch_certificate_dir }}:/usr/share/elasticsearch/config/certs/:ro,Z"
+      - "{{ elasticsearch_config_dir }}/role_mapping.yml:/usr/share/elasticsearch/config/role_mapping.yml:ro,Z"
+      #- "/var/dockershared/elasticsearch/snapshots/:/snapshots/:rw"
+
+- name: Wait for elasticsearch port to be opened
+  wait_for:
+    state: started
+    host: "{{ elasticsearch_network_address }}"
+    port: "{{ elasticsearch_network_port }}"
+    delay: 5
+    timeout: 60
+
+- name: Check if pass changed status file exists
+  stat: 
+    path: "{{ elasticsearch_config_dir }}/pass_changed"
+  run_once: True
+  register: pass_status_file
+
+- name: Check if license status file exists
+  stat: 
+    path: "{{ elasticsearch_config_dir }}/license_applied"
+  run_once: True
+  register: license_status_file
+
+- name: Change users password
+  uri: 
+    method: POST
+    url_username: elastic
+    url_password: "{{ secrets.elasticsearch.bootstrap.password }}"
+    url: "https://{{ elasticsearch_network_address }}:{{ elasticsearch_network_port }}/_security/user/{{ item.key }}/_password"
+    remote_src: True
+    return_content: True
+    validate_certs: False
+    body_format: json
+    body: "{ 'password' : '{{ item.value }}' }"
+  run_once: True
+  with_dict: "{{ secrets.elasticsearch.users }}"
+  when: pass_status_file.stat.exists == False
+  register: user_pass_change
+  
+- name: Create pass changed status file
+  file:
+    state: touch
+    path: "{{ elasticsearch_config_dir }}/pass_changed"
+  run_once: True
+  when: pass_status_file.stat.exists == False and user_pass_change.results|length == secrets.elasticsearch.users|length
+  #user_pass_change.results.0.invocation.module_args.status_code == 200
+
+- name: Apply license
+  uri:
+    method: POST
+    url_username: elastic
+    url_password: "{{ secrets.elasticsearch.users.elastic }}"
+    url: "https://{{ elasticsearch_network_address }}:{{ elasticsearch_network_port }}/_license"
+    remote_src: True
+    return_content: True
+    validate_certs: False
+    body_format: json
+    body: "{{ lookup('file', lookup('env','PWD') + '/files/elasticsearch/license/license.json') }}"
+  run_once: True
+  when: elasticsearch_license_enabled and license_status_file.stat.exists == False
+  register: license_apply
+
+- include_tasks: elastic_users.yml
+  vars:
+    users_definition_file: "{{ role_path }}/files/users/definition.yml"
+    roles_definition_file: "{{ role_path }}/files/roles/definition.yml"
+  when: elasticsearch_users_create
+
+- name: Create license status file
+  file:
+    state: touch
+    path: "{{ elasticsearch_config_dir }}/license_applied"
+  run_once: True
+  when: license_status_file.stat.exists == False and license_apply.status == 200 and license_apply.json.license_status == 'valid'
