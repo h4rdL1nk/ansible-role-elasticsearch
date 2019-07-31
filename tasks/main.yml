@@ -117,12 +117,6 @@
   run_once: True
   register: pass_status_file
 
-- name: Check if license status file exists
-  stat: 
-    path: "{{ elasticsearch_config_dir }}/license_applied"
-  run_once: True
-  register: license_status_file
-
 - name: Change users password
   uri: 
     method: POST
@@ -147,6 +141,18 @@
   when: pass_status_file.stat.exists == False and user_pass_change.results|length == secrets.elasticsearch.users|length
   #user_pass_change.results.0.invocation.module_args.status_code == 200
 
+- include_tasks: elastic_users.yml
+  vars:
+    users_definition_file: "{{ role_path }}/files/users/definition.yml"
+    roles_definition_file: "{{ role_path }}/files/roles/definition.yml"
+  when: elasticsearch_users_create
+
+- name: Check if license status file exists
+  stat: 
+    path: "{{ elasticsearch_config_dir }}/license_applied"
+  run_once: True
+  register: license_status_file
+  
 - name: Apply license
   uri:
     method: POST
@@ -162,15 +168,10 @@
   when: elasticsearch_license_enabled and license_status_file.stat.exists == False
   register: license_apply
 
-- include_tasks: elastic_users.yml
-  vars:
-    users_definition_file: "{{ role_path }}/files/users/definition.yml"
-    roles_definition_file: "{{ role_path }}/files/roles/definition.yml"
-  when: elasticsearch_users_create
-
 - name: Create license status file
   file:
     state: touch
     path: "{{ elasticsearch_config_dir }}/license_applied"
   run_once: True
   when: license_status_file.stat.exists == False and license_apply.status == 200 and license_apply.json.license_status == 'valid'
+
