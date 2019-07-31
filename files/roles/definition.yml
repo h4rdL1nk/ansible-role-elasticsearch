@@ -1,6 +1,7 @@
 ---
 
 roles:
+
   - fluentd_role:
       cluster:
         - monitor
@@ -24,6 +25,22 @@ roles:
       indices:
         - names:
             - 'filebeat*'
+          privileges:
+            - manage
+            - read
+            - write
+            - create_index
+      metadata:
+        version: 1
+
+  - metricbeat_writter:
+      cluster:
+        - monitor
+        - manage_index_templates
+        - manage_ilm
+      indices:
+        - names:
+            - 'metricbeat*'
           privileges:
             - manage
             - read
