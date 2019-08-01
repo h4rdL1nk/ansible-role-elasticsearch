@@ -102,6 +102,7 @@
       - "{{ elasticsearch_certificate_dir }}:/usr/share/elasticsearch/config/certs/:ro,Z"
       - "{{ elasticsearch_config_dir }}/role_mapping.yml:/usr/share/elasticsearch/config/role_mapping.yml:ro,Z"
       #- "/var/dockershared/elasticsearch/snapshots/:/snapshots/:rw"
+  register: container_deploy
 
 - name: Wait for elasticsearch port to be opened
   wait_for:
@@ -130,7 +131,7 @@
     body: "{ 'password' : '{{ item.value }}' }"
   run_once: True
   with_dict: "{{ secrets.elasticsearch.users }}"
-  when: pass_status_file.stat.exists == False
+  when: pass_status_file.stat.exists == False and not container_deploy.changed
   register: user_pass_change
   
 - name: Create pass changed status file
