@@ -2,6 +2,14 @@
 
 users:
 
+  - logstash_admin_user:
+      password: kog7gueN
+      roles:
+        - logstash_admin
+        - logstash_writter
+      full_name: Logstash centralized admin user
+      email: test@dummy.es
+
   - logstash_writter:
       password: kog7gueN
       roles:
