@@ -17,6 +17,24 @@ roles:
       metadata:
         version: 1
 
+  - logstash_writter:
+      cluster:
+        - monitor
+        - manage_index_templates
+        - manage_ilm
+      indices:
+        - names:
+            - 'logstash*'
+          privileges:
+            - manage
+            - manage_ilm
+            - read
+            - write
+            - delete
+            - create_index
+      metadata:
+        version: 1
+
   - filebeat_writter:
       cluster:
         - monitor
