@@ -27,8 +27,9 @@ elasticsearch_certificate_ca_file_monitoring: ESMONca.crt
 elasticsearch_certificate_instance_file_key: instance.key 
 elasticsearch_certificate_instance_file_csr: instance.csr
 elasticsearch_certificate_instance_file_crt: instance.crt
-elasticsearch_users_create: true
+elasticsearch_users_create: false 
 elasticsearch_users_file: users/definition.yml
-elasticsearch_roles_create: true
+elasticsearch_users_internal_pass_change: false
+elasticsearch_roles_create: false
 elasticsearch_roles_file: roles/definition.yml
 elasticsearch_secrets_file: vault/secrets.yml
