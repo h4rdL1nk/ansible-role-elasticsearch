@@ -32,4 +32,3 @@ elasticsearch_users_file: users/definition.yml
 elasticsearch_roles_create: true
 elasticsearch_roles_file: roles/definition.yml
 elasticsearch_secrets_file: vault/secrets.yml
-elasticsearch_local_certificates_dir: files/elasticsearch/certificates
