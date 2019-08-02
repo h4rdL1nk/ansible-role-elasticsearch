@@ -30,6 +30,7 @@
     mode: 0440
     owner: "{{ elasticsearch_docker_container_user_uid }}"
     group: "{{ elasticsearch_docker_container_group_uid }}"
+  register: copy_certs
 
 - name: Copy role mapping file
   template:
@@ -70,7 +71,7 @@
 - name: Deploy elasticsearch containers
   docker_container:
     state: started
-    restart: "{{ es_config.changed or keystore_create.changed or kernel_params.changed }}"
+    restart: "{{ copy_certs.changed or es_config.changed or keystore_create.changed or kernel_params.changed }}"
     #recreate: True
     name: "smd_infra_elastic"
     user: root
