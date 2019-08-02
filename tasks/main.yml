@@ -25,7 +25,7 @@
 
 - name: Copy SSL certificates
   copy:
-    src: certificates/
+    src: "{{ elasticsearch_certificate_local_dir|default('certificates') }}"
     dest: "{{ elasticsearch_certificate_dir  }}/"
     mode: 0440
     owner: "{{ elasticsearch_docker_container_user_uid }}"
