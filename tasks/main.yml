@@ -22,6 +22,7 @@
     - "{{ elasticsearch_config_dir }}"
     - "{{ elasticsearch_data_dir }}"
     - "{{ elasticsearch_certificate_dir }}"
+  register: dir_create
 
 - name: Copy SSL certificates
   copy:
@@ -110,7 +111,7 @@
     state: started
     host: "{{ elasticsearch_network_address }}"
     port: "{{ elasticsearch_network_port }}"
-    delay: 5
+    delay: 1
     timeout: 60
 
 - name: Check if pass changed status file exists
@@ -132,16 +133,15 @@
     body: "{ 'password' : '{{ item.value }}' }"
   run_once: True
   with_dict: "{{ secrets.elasticsearch.users }}"
-  when: elasticsearch_users_internal_pass_change == True and pass_status_file.stat.exists == False and not container_deploy.changed
+  when: elasticsearch_users_internal_pass_change and pass_status_file.stat.exists == False
   register: user_pass_change
-  
+
 - name: Create pass changed status file
   file:
     state: touch
     path: "{{ elasticsearch_config_dir }}/pass_changed"
   run_once: True
-  when: pass_status_file.stat.exists == False and user_pass_change.results|length == secrets.elasticsearch.users|length
-  #user_pass_change.results.0.invocation.module_args.status_code == 200
+  when: pass_status_file.stat.exists == False and user_pass_change.results|selectattr('status','equalto',200)|list|length == secrets.elasticsearch.users|length
 
 - include_tasks: elastic_users.yml
   vars:
