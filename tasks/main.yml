@@ -132,7 +132,7 @@
     body: "{ 'password' : '{{ item.value }}' }"
   run_once: True
   with_dict: "{{ secrets.elasticsearch.users }}"
-  when: elasticsearch_users_internal_pass_change and pass_status_file.stat.exists == False and not container_deploy.changed
+  when: elasticsearch_users_internal_pass_change == True and pass_status_file.stat.exists == False and not container_deploy.changed
   register: user_pass_change
   
 - name: Create pass changed status file
