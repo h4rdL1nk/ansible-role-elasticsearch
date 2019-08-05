@@ -15,7 +15,7 @@
   file:
     state: directory
     path: "{{ item }}"
-    recurse: True
+    recurse: False 
     owner: "{{ elasticsearch_docker_container_user_uid }}"
     group: "{{ elasticsearch_docker_container_group_uid }}"
   with_items:
