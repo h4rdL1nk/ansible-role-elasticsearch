@@ -33,9 +33,9 @@ xpack.security.http.ssl.key:  /usr/share/elasticsearch/config/certs/{{ elasticse
 xpack.security.http.ssl.certificate: /usr/share/elasticsearch/config/certs/{{ elasticsearch_certificate_instance_file_crt }}
 xpack.security.http.ssl.certificate_authorities: [ "/usr/share/elasticsearch/config/certs/{{ elasticsearch_certificate_ca_file_ingest }}" ]
 {% endif %}
-#xpack.notification.email.account.default.profile: standard
-#xpack.notification.email.account.default.smtp.auth: false
-#xpack.notification.email.account.default.smtp.host: mailhost.service.dsn.inet
+xpack.notification.email.account.default.profile: standard
+xpack.notification.email.account.default.smtp.auth: false
+xpack.notification.email.account.default.smtp.host: {{ elasticsearch_notification_mail_server }}
 # https://www.elastic.co/guide/en/elasticsearch/reference/current/es-monitoring.html
 # https://www.elastic.co/guide/en/elasticsearch/reference/current/collecting-monitoring-data.html
 #xpack.monitoring.enabled: true

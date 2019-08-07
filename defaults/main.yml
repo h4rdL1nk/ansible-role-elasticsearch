@@ -12,6 +12,7 @@ elasticsearch_security_auth_ldap_hosts:
 elasticsearch_security_auth_ldap_base_dn: "o=TID"
 elasticsearch_security_auth_ldap_role_mapping_unmapped_groups_as_roles: 'false'
 elasticsearch_security_auth_ldap_role_mapping_file: /usr/share/elasticsearch/config/role_mapping.yml
+elasticsearch_notification_mail_server: mailhost.hi.inet
 elasticsearch_data_dir: /var/dockershared/elasticsearch/data
 elasticsearch_config_dir: /var/dockershared/elasticsearch/config
 elasticsearch_cluster_name: clustermicro
