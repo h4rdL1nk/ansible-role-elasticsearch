@@ -69,6 +69,22 @@
   with_dict: "{{ secrets.elasticsearch.keystore }}"
   when: keystore_create.changed
 
+- name: Pre-restart cluster actions
+  uri:
+    method: "{{ item.value.method }}"
+    url_username: elastic
+    url_password: "{{ secrets.elasticsearch.bootstrap.password }}"
+    url: "https://{{ elasticsearch_network_address }}:{{ elasticsearch_network_port }}/{{ item.value.path }}"
+    remote_src: True
+    return_content: True
+    validate_certs: False
+    body_format: json
+    body: "{{ item.value.body }}"
+  run_once: True
+  with_dict: "{{ pre_restart_actions }}"
+  when: copy_certs.changed or es_config.changed or keystore_create.changed or kernel_params.changed
+  register: pre_restart_actions
+
 - name: Deploy elasticsearch containers
   docker_container:
     state: started
