@@ -34,9 +34,9 @@ elasticsearch_users_internal_pass_change: false
 elasticsearch_roles_create: false
 elasticsearch_roles_file: roles/definition.yml
 elasticsearch_secrets_file: vault/secrets.yml
+elasticsearch_pre_restart_actions: false
 
 pre_restart_actions:
-
   disable_routing:
     method: PUT
     path: _cluster/settings
