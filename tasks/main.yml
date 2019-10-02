@@ -67,7 +67,7 @@
   args:
     stdin: "{{ item.value }}"
   with_dict: "{{ secrets.elasticsearch.keystore }}"
-  when: keystore_create.changed elasticsearch_force_keystore_write
+  when: keystore_create.changed or elasticsearch_force_keystore_write
   register: keystore_write
 
 - name: Pre-restart cluster actions
