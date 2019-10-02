@@ -33,6 +33,10 @@
     group: "{{ elasticsearch_docker_container_group_uid }}"
   register: copy_certs
 
+- name: Load secrets
+  include_vars:
+    file: "{{ lookup('env', 'PWD') }}/{{ elasticsearch_secrets_file|default('vault/secrets.yml')}}"
+
 - name: Copy role mapping file
   template:
     src: role_mapping.j2
@@ -60,10 +64,6 @@
   args:
     creates: "{{ elasticsearch_config_dir }}/elasticsearch.keystore"
   register: keystore_create
-
-- name: Load secrets
-  include_vars:
-    file: "{{ lookup('env', 'PWD') }}/{{ elasticsearch_secrets_file|default('vault/secrets.yml')}}"
 
 - name: Add elasticsearch keystore keys
   command: "docker run --rm -i -v {{ elasticsearch_config_dir }}:/usr/share/elasticsearch/config:rw,Z -v {{ elasticsearch_config_dir }}/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z {{ elasticsearch_docker_image }}:{{ elasticsearch_docker_tag   }} elasticsearch-keystore add --stdin {{ item.key }}"
