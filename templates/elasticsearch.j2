@@ -43,12 +43,23 @@ xpack.notification.email.account.default.smtp.host: {{ elasticsearch_notificatio
 xpack.monitoring:
   enabled: {{ elasticsearch_monitoring_enable }} 
   elasticsearch.collection.enabled: true
+  exporters.local1.type: local
+  #exporters.id1.type: http
+  #exporters.id1.host: ["https://172.28.10.90:9200"]
+  #exporters.id1.auth.username: remote_monitoring_user
+  #exporters.id1.auth.password: FwkqJO5i7U3uOJgVQHGM
+  #exporters.id1.ssl.certificate_authorities: [ "/usr/share/elasticsearch/config/certs/ESMONca.crt" ]
 
-#xpack.monitoring.exporters.id1.type: http
-#xpack.monitoring.exporters.id1.host: ["https://172.28.10.90:9200"]
-#xpack.monitoring.exporters.id1.auth.username: remote_monitoring_user
-#xpack.monitoring.exporters.id1.auth.password: FwkqJO5i7U3uOJgVQHGM
-#xpack.monitoring.exporters.id1.ssl.certificate_authorities: [ "/usr/share/elasticsearch/config/certs/ESMONca.crt" ]
 #SLACK NOTIFICATIONS
 #xpack.notification.slack.account.monitoring.message_defaults.from: ES Watcher PRE
 #path.repo: ["/snapshots"]
+
+monitoring:
+  enabled: {{ filebeat_monitoring_enable }} 
+  elasticsearch:
+    hosts: [ {% for node in filebeat_elasticsearch_monitoring_hosts %}"{% if elasticsearch_security_http_enabled %}https{% else %}http{% endif %}://{{ node }}:{{ elasticsearch_network_port }}"{% if loop.index != filebeat_elasticsearch_monitoring_hosts|length %},{% endif %}{% endfor %} ]
+    username: "${ES_MONITORING_USER}"
+    password: "${ES_MONITORING_PASS}"
+    ssl:
+      verification_mode: none 
+      certificate_authorities: "/usr/share/filebeat/{{ elasticsearch_certificate_ca_file_ingest }}"
