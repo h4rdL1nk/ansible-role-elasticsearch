@@ -51,7 +51,7 @@
 
 - name: Remove elasticsearch keystore
   file:
-    path: {{ elasticsearch_config_dir }}/elasticsearch.keystore 
+    path: "{{ elasticsearch_config_dir }}/elasticsearch.keystore"
     state: absent
   when: elasticsearch_force_keystore_create
 
