@@ -42,7 +42,11 @@ xpack.notification.email.account.default.smtp.host: {{ elasticsearch_notificatio
 
 xpack.monitoring:
   enabled: {{ elasticsearch_monitoring_enable }} 
-  elasticsearch.collection.enabled: true
+  elasticsearch:
+    collection:
+      enabled: true
+  collection:
+    enabled: {{ elasticsearch_monitoring_enable }}
   exporters:
     id1:
       type: http
