@@ -49,8 +49,11 @@
     group: "{{ elasticsearch_docker_container_group_uid }}"
   register: es_config
 
-# Setup passwords
-#docker exec -it smd_infra_elastic bin/elasticsearch-setup-passwords auto -b
+- name: Remove elasticsearch keystore
+  file:
+    path: {{ elasticsearch_config_dir }}/elasticsearch.keystore 
+    state: absent
+  when: elasticsearch_force_keystore_create
 
 - name: Create elasticsearch keystore
   command: "docker run --rm -i -v {{ elasticsearch_config_dir }}:/usr/share/elasticsearch/config:rw,Z -v {{ elasticsearch_config_dir }}/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z {{ elasticsearch_docker_image }}:{{ elasticsearch_docker_tag   }} elasticsearch-keystore create"
@@ -67,7 +70,7 @@
   args:
     stdin: "{{ item.value }}"
   with_dict: "{{ secrets.elasticsearch.keystore }}"
-  when: keystore_create.changed or elasticsearch_force_keystore_write
+  when: keystore_create.changed
   register: keystore_write
 
 - name: Pre-restart cluster actions

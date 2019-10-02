@@ -31,7 +31,7 @@ elasticsearch_certificate_instance_file_crt: instance.crt
 elasticsearch_users_create: false 
 elasticsearch_users_file: users/definition.yml
 elasticsearch_users_internal_pass_change: false
-elasticsearch_force_keystore_write: false
+elasticsearch_force_keystore_create: false
 elasticsearch_roles_create: false
 elasticsearch_roles_file: roles/definition.yml
 elasticsearch_secrets_file: vault/secrets.yml
