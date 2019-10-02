@@ -31,3 +31,10 @@ users:
         - metricbeat_writter
       full_name: Metricbeat forwarder
       email: test@dummy.es
+
+  - remote_monitor:
+      password: r4m0t3MOn1T0r
+      roles:
+        - remote_monitoring_agent
+      full_name: ES remote monitoring
+
