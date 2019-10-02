@@ -39,6 +39,7 @@ elasticsearch_pre_restart_actions: false
 elasticsearch_monitoring_enable: false
 elasticsearch_monitoring_hosts: []
 
+
 pre_restart_actions:
   disable_routing:
     method: PUT
