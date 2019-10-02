@@ -36,11 +36,14 @@ xpack.security.http.ssl.certificate_authorities: [ "/usr/share/elasticsearch/con
 xpack.notification.email.account.default.profile: standard
 xpack.notification.email.account.default.smtp.auth: false
 xpack.notification.email.account.default.smtp.host: {{ elasticsearch_notification_mail_server }}
+
 # https://www.elastic.co/guide/en/elasticsearch/reference/current/es-monitoring.html
 # https://www.elastic.co/guide/en/elasticsearch/reference/current/collecting-monitoring-data.html
-#xpack.monitoring.enabled: true
-#xpack.monitoring.elasticsearch.collection.enabled: true
-#xpack.monitoring.collection.enabled: true
+
+monitoring:
+  enabled: {{ elasticsearch_monitoring_enable }} 
+  elasticsearch.collection.enabled: true
+
 #xpack.monitoring.exporters.id1.type: http
 #xpack.monitoring.exporters.id1.host: ["https://172.28.10.90:9200"]
 #xpack.monitoring.exporters.id1.auth.username: remote_monitoring_user
