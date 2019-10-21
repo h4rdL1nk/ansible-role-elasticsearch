@@ -39,6 +39,12 @@ elasticsearch_pre_restart_actions: false
 elasticsearch_monitoring_enable: false
 elasticsearch_monitoring_hosts: []
 
+elasticsearch_lvm_storage_enable: False
+elasticsearch_lvm_storage_pv_devices: []
+elasticsearch_lvm_storage_pv_pesize: 32
+elasticsearch_lvm_storage_vg_name: elasticsearch
+elasticsearch_lvm_storage_lv_name: data
+elasticsearch_lvm_storage_lv_size: 100%FREE
 
 pre_restart_actions:
   disable_routing:

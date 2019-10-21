@@ -24,6 +24,9 @@
     - "{{ elasticsearch_certificate_dir }}"
   register: dir_create
 
+- include: lvm.yml
+  when: elasticsearch_lvm_storage_enable
+
 - name: Copy SSL certificates
   copy:
     src: "{{ elasticsearch_certificate_local_dir|default('certificates') }}/"
