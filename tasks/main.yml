@@ -24,7 +24,7 @@
     - "{{ elasticsearch_certificate_dir }}"
   register: dir_create
 
-- include: lvm.yml
+- include_tasks: lvm.yml
   when: elasticsearch_lvm_storage_enable
 
 - name: Copy SSL certificates
