@@ -96,18 +96,17 @@
   docker_container:
     state: started
     restart: "{{ copy_certs.changed or es_config.changed or keystore_create.changed or kernel_params.changed or keystore_write.changed }}"
-    #recreate: True
     name: "smd_infra_elastic"
     user: root
     image: "{{ elasticsearch_docker_image }}:{{ elasticsearch_docker_tag }}"
     detach: true
     #cpu_quota: '2'
-    #memory: ''
+    memory: "{{ elasticsearch_docker_container_memory }}"
     ulimits: 
       - 'memlock:-1:-1'
     env:
       node.name: "{{ ansible_hostname }}"
-      #ES_JAVA_OPTS: "-Xms4g -Xmx4g" 
+      ES_JAVA_OPTS: "-Xms{{ elasticsearch_docker_container_memory / 2 }}g -Xmx{{ elasticsearch_docker_container_memory / 2 }}g" 
     restart_policy: unless-stopped
     log_driver: json-file
     log_options:

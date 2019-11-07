@@ -4,6 +4,7 @@ elasticsearch_docker_image: registry.smartdigits.io/infra/elasticsearch
 elasticsearch_docker_tag: 7.2.0
 elasticsearch_docker_container_user_uid: 1000
 elasticsearch_docker_container_group_uid: 1000
+elasticsearch_docker_container_memory: 4
 elasticsearch_security_enabled: true
 elasticsearch_security_transport_enabled: true
 elasticsearch_security_http_enabled: true
