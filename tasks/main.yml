@@ -101,12 +101,12 @@
     image: "{{ elasticsearch_docker_image }}:{{ elasticsearch_docker_tag }}"
     detach: true
     #cpu_quota: '2'
-    memory: "{{ elasticsearch_docker_container_memory | default( ( ansible_memtotal_mb / 2 ) | int )}}m"
+    memory: "{{ elasticsearch_docker_container_memory | default( ( ansible_memtotal_mb / 2 ) | int ) }}m"
     ulimits: 
       - 'memlock:-1:-1'
     env:
       node.name: "{{ ansible_hostname }}"
-      ES_JAVA_OPTS: "-Xms{{ (elasticsearch_docker_container_memory / 2) | int }}m -Xmx{{ (elasticsearch_docker_container_memory / 2) | int }}m" 
+      ES_JAVA_OPTS: "-Xms{{ ( elasticsearch_docker_container_memory | default( ( ansible_memtotal_mb / 2 ) | int ) / 2) | int }}m -Xmx{{ (elasticsearch_docker_container_memory | default( ( ansible_memtotal_mb / 2 ) | int ) / 2) | int }}m" 
     restart_policy: unless-stopped
     log_driver: json-file
     log_options:
