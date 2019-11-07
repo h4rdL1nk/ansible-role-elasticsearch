@@ -101,7 +101,7 @@
     image: "{{ elasticsearch_docker_image }}:{{ elasticsearch_docker_tag }}"
     detach: true
     #cpu_quota: '2'
-    memory: "{{ elasticsearch_docker_container_memory }}GB"
+    memory: "{{ elasticsearch_docker_container_memory }}g"
     ulimits: 
       - 'memlock:-1:-1'
     env:
