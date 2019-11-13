@@ -65,3 +65,7 @@ xpack.monitoring:
 #xpack.notification.slack.account.monitoring.message_defaults.from: ES Watcher PRE
 #path.repo: ["/snapshots"]
 
+# Truststore config
+{% if elasticsearch_security_truststore_enabled == true %}
+xpack.http.ssl.truststore.path: /usr/share/elasticsearch/config/certs/http_ssl_truststore.jks
+{% endif %}
