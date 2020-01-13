@@ -8,6 +8,7 @@ users:
         - logstash_admin
         - logstash_writter
         - metricbeat_writter
+        - heartbeat_writter
       full_name: Logstash centralized admin user
       email: test@dummy.es
 
