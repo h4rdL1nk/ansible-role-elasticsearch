@@ -32,6 +32,13 @@ users:
       full_name: Metricbeat forwarder
       email: test@dummy.es
 
+  - heartbeat_writter:
+      password: tckTHOXugBr3X9F9
+      roles:
+        - metricbeat_writter
+      full_name: Heartbeat forwarder
+      email: test@dummy.es
+
   - remote_monitor:
       password: r4m0t3MOn1T0r
       roles:

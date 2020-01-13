@@ -66,3 +66,20 @@ roles:
             - create_index
       metadata:
         version: 1
+
+  - heartbeat_writter:
+      cluster:
+        - monitor
+        - manage_index_templates
+        - manage_ilm
+      indices:
+        - names:
+            - 'heartbeat*'
+          privileges:
+            - manage
+            - read
+            - write
+            - create_index
+      metadata:
+        version: 1
+
