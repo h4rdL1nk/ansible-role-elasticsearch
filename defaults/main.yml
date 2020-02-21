@@ -48,6 +48,10 @@ elasticsearch_lvm_storage_vg_name: elasticsearch
 elasticsearch_lvm_storage_lv_name: data
 elasticsearch_lvm_storage_lv_size: 100%FREE
 
+elasticsearch_docker_cpu_period: 100000
+elasticsearch_docker_cpu_quota: 0
+elasticsearch_docker_cpu_count: 1
+
 pre_restart_actions:
   disable_routing:
     method: PUT
