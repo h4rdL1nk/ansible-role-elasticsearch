@@ -26,6 +26,7 @@
     - "{{ elasticsearch_config_dir }}"
     - "{{ elasticsearch_data_dir }}"
     - "{{ elasticsearch_certificate_dir }}"
+    - "{{ elasticsearch_snapshot_dir }}"
   register: dir_create
   tags:
     - configuration
@@ -165,7 +166,7 @@
       - "{{ elasticsearch_config_dir }}/elasticsearch.keystore:/usr/share/elasticsearch/config/elasticsearch.keystore:ro,Z"
       - "{{ elasticsearch_certificate_dir }}:/usr/share/elasticsearch/config/certs/:ro,Z"
       - "{{ elasticsearch_config_dir }}/role_mapping.yml:/usr/share/elasticsearch/config/role_mapping.yml:ro,Z"
-      #- "/var/dockershared/elasticsearch/snapshots/:/snapshots/:rw"
+      - "{{ elasticsearch_snapshot_dir }}:/snapshots/:rw"
   register: container_deploy
   tags:
     - deploy
