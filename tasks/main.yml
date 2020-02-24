@@ -10,6 +10,10 @@
   with_dict:
     vm.max_map_count: '262144'
   register: kernel_params
+  tags:
+    - configuration
+    - system
+    - kernel
 
 - name: Create elasticsearch directories
   file:
@@ -23,9 +27,16 @@
     - "{{ elasticsearch_data_dir }}"
     - "{{ elasticsearch_certificate_dir }}"
   register: dir_create
+  tags:
+    - configuration
+    - files
 
 - include_tasks: lvm.yml
   when: elasticsearch_lvm_storage_enable
+  tags:
+    - configuration
+    - system
+    - storage
 
 - name: Copy SSL certificates
   copy:
@@ -35,10 +46,16 @@
     owner: "{{ elasticsearch_docker_container_user_uid }}"
     group: "{{ elasticsearch_docker_container_group_uid }}"
   register: copy_certs
+  tags:
+    - configuration
+    - files
+    - certificates
 
 - name: Load secrets
   include_vars:
     file: "{{ lookup('env', 'PWD') }}/{{ elasticsearch_secrets_file|default('vault/secrets.yml')}}"
+  tags:
+    - configuration
 
 - name: Copy role mapping file
   template:
@@ -47,6 +64,10 @@
     owner: "{{ elasticsearch_docker_container_user_uid }}"
     group: "{{ elasticsearch_docker_container_group_uid }}"
   register: es_role_mapping
+  tags:
+    - configuration
+    - files
+    - roles
 
 - name: Copy elasticsearch configuration
   template:
@@ -55,18 +76,29 @@
     owner: "{{ elasticsearch_docker_container_user_uid }}"
     group: "{{ elasticsearch_docker_container_group_uid }}"
   register: es_config
+  tags:
+    - configuration
+    - files
 
 - name: Remove elasticsearch keystore
   file:
     path: "{{ elasticsearch_config_dir }}/elasticsearch.keystore"
     state: absent
   when: elasticsearch_force_keystore_create
+  tags:
+    - configuration
+    - files
+    - keystore
 
 - name: Create elasticsearch keystore
   command: "docker run --rm -i -v {{ elasticsearch_config_dir }}:/usr/share/elasticsearch/config:rw,Z -v {{ elasticsearch_config_dir }}/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z {{ elasticsearch_docker_image }}:{{ elasticsearch_docker_tag   }} elasticsearch-keystore create"
   args:
     creates: "{{ elasticsearch_config_dir }}/elasticsearch.keystore"
   register: keystore_create
+  tags:
+    - configuration
+    - files
+    - keystore
 
 - name: Add elasticsearch keystore keys
   command: "docker run --rm -i -v {{ elasticsearch_config_dir }}:/usr/share/elasticsearch/config:rw,Z -v {{ elasticsearch_config_dir }}/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z {{ elasticsearch_docker_image }}:{{ elasticsearch_docker_tag   }} elasticsearch-keystore add --stdin {{ item.key }}"
@@ -75,6 +107,10 @@
   with_dict: "{{ secrets.elasticsearch.keystore }}"
   when: keystore_create.changed
   register: keystore_write
+  tags:
+    - configuration
+    - files
+    - keystore
 
 - name: Pre-restart cluster actions
   uri:
@@ -91,6 +127,9 @@
   with_dict: "{{ pre_restart_actions }}"
   when: elasticsearch_pre_restart_actions and ( copy_certs.changed or es_config.changed or keystore_create.changed or kernel_params.changed )
   register: pre_restart_actions
+  tags:
+    - configuration
+    - api
 
 - name: Deploy elasticsearch containers
   docker_container:
@@ -128,6 +167,8 @@
       - "{{ elasticsearch_config_dir }}/role_mapping.yml:/usr/share/elasticsearch/config/role_mapping.yml:ro,Z"
       #- "/var/dockershared/elasticsearch/snapshots/:/snapshots/:rw"
   register: container_deploy
+  tags:
+    - deploy
 
 - name: Wait for elasticsearch port to be opened
   wait_for:
@@ -136,12 +177,18 @@
     port: "{{ elasticsearch_network_port }}"
     delay: 1
     timeout: 60
+  tags:
+    - deploy
 
 - name: Check if pass changed status file exists
   stat: 
     path: "{{ elasticsearch_config_dir }}/pass_changed"
   run_once: True
   register: pass_status_file
+  tags:
+    - configuration
+    - users
+    - password
 
 - name: Change users password
   uri: 
@@ -158,6 +205,10 @@
   with_dict: "{{ secrets.elasticsearch.users }}"
   when: elasticsearch_users_internal_pass_change and pass_status_file.stat.exists == False
   register: user_pass_change
+  tags:
+    - configuration
+    - users
+    - password
 
 - name: Create pass changed status file
   file:
@@ -165,19 +216,29 @@
     path: "{{ elasticsearch_config_dir }}/pass_changed"
   run_once: True
   when: pass_status_file.stat.exists == False and user_pass_change.results|selectattr('status','equalto',200)|list|length == secrets.elasticsearch.users|length
+  tags:
+    - configuration
+    - users
+    - password
 
 - include_tasks: elastic_users.yml
   vars:
     users_definition_file: "{{ role_path }}/files/users/definition.yml"
     roles_definition_file: "{{ role_path }}/files/roles/definition.yml"
   when: elasticsearch_users_create
+  tags:
+    - configuration
+    - users
 
 - name: Check if license status file exists
   stat: 
     path: "{{ elasticsearch_config_dir }}/license_applied"
   run_once: True
   register: license_status_file
-  
+  tags:
+    - configuration
+    - license
+
 - name: Apply license
   uri:
     method: POST
@@ -192,6 +253,9 @@
   run_once: True
   when: elasticsearch_license_enabled and license_status_file.stat.exists == False
   register: license_apply
+  tags:
+    - configuration
+    - license
 
 - name: Create license status file
   file:
@@ -199,4 +263,6 @@
     path: "{{ elasticsearch_config_dir }}/license_applied"
   run_once: True
   when: license_status_file.stat.exists == False and license_apply.status == 200 and license_apply.json.license_status == 'valid'
-
+  tags:
+    - configuration
+    - license
