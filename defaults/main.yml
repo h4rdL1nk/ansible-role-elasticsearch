@@ -5,6 +5,9 @@ elasticsearch_docker_tag: 7.2.0
 elasticsearch_docker_container_user_uid: 1000
 elasticsearch_docker_container_group_uid: 1000
 elasticsearch_docker_container_memory: 4096
+elasticsearch_docker_container_cpu_period: 100000
+elasticsearch_docker_container_cpu_quota: 0
+elasticsearch_docker_container_cpu_count: 1
 elasticsearch_security_enabled: true
 elasticsearch_security_transport_enabled: true
 elasticsearch_security_http_enabled: true
@@ -17,6 +20,7 @@ elasticsearch_security_truststore_enabled: false
 elasticsearch_notification_mail_server: mailhost.hi.inet
 elasticsearch_data_dir: /var/dockershared/elasticsearch/data
 elasticsearch_config_dir: /var/dockershared/elasticsearch/config
+elasticsearch_snapshot_dir: /var/dockershared/elasticsearch/snapshots
 elasticsearch_cluster_name: clustermicro
 elasticsearch_cluster_group: elasticsearch
 elasticsearch_network_port: 9200
