@@ -144,7 +144,7 @@
     cpu_quota: "{{ ( ( elasticsearch_docker_container_cpu_period / ansible_processor_vcpus ) * elasticsearch_docker_container_cpu_count ) | int }}"
     memory: "{{ elasticsearch_docker_container_memory | default( ( ansible_memtotal_mb / 2 ) | int ) }}m"
     ulimits: 
-      - 'memlock:-1:-1'
+      - memlock:-1:-1
     env:
       node.name: "{{ ansible_hostname }}"
       ES_JAVA_OPTS: "-Xms{{ ( elasticsearch_docker_container_memory | default( ( ansible_memtotal_mb / 2 ) | int ) / 2) | int }}m -Xmx{{ (elasticsearch_docker_container_memory | default( ( ansible_memtotal_mb / 2 ) | int ) / 2) | int }}m" 
