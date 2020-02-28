@@ -20,7 +20,8 @@ elasticsearch_security_truststore_enabled: false
 elasticsearch_notification_mail_server: mailhost.hi.inet
 elasticsearch_data_dir: /var/dockershared/elasticsearch/data
 elasticsearch_config_dir: /var/dockershared/elasticsearch/config
-elasticsearch_snapshot_dir: /var/dockershared/elasticsearch/snapshots
+elasticsearch_snapshot_dir_host: /var/dockershared/elasticsearch/snapshots
+elasticsearch_snapshot_dir_dest: /snapshots
 elasticsearch_cluster_name: clustermicro
 elasticsearch_cluster_group: elasticsearch
 elasticsearch_network_port: 9200
