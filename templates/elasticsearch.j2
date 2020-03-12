@@ -40,6 +40,7 @@ xpack.notification.email.account.default.smtp.host: {{ elasticsearch_notificatio
 # https://www.elastic.co/guide/en/elasticsearch/reference/current/es-monitoring.html
 # https://www.elastic.co/guide/en/elasticsearch/reference/current/collecting-monitoring-data.html
 
+{% if elasticsearch_monitoring_enable %}
 xpack.monitoring:
   enabled: {{ elasticsearch_monitoring_enable }} 
   elasticsearch:
@@ -59,7 +60,7 @@ xpack.monitoring:
         password: {{ secrets.elasticsearch.monitoring.pass }} 
     id2:
       type: local
-
+{% endif %}
 
 #SLACK NOTIFICATIONS
 #xpack.notification.slack.account.monitoring.message_defaults.from: ES Watcher PRE
