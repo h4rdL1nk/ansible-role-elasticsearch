@@ -43,7 +43,7 @@ elasticsearch_roles_create: false
 elasticsearch_roles_file: roles/definition.yml
 elasticsearch_secrets_file: vault/secrets.yml
 elasticsearch_pre_restart_actions: false
-elasticsearch_monitoring_enable: false
+elasticsearch_monitoring_enabled: false
 elasticsearch_monitoring_hosts: []
 
 elasticsearch_lvm_storage_enable: False

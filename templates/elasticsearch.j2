@@ -40,14 +40,14 @@ xpack.notification.email.account.default.smtp.host: {{ elasticsearch_notificatio
 # https://www.elastic.co/guide/en/elasticsearch/reference/current/es-monitoring.html
 # https://www.elastic.co/guide/en/elasticsearch/reference/current/collecting-monitoring-data.html
 
-{% if elasticsearch_monitoring_enable %}
+{% if elasticsearch_monitoring_enabled %}
 xpack.monitoring:
-  enabled: {{ elasticsearch_monitoring_enable }} 
+  enabled: {{ elasticsearch_monitoring_enabled }} 
   elasticsearch:
     collection:
       enabled: true
   collection:
-    enabled: {{ elasticsearch_monitoring_enable }}
+    enabled: {{ elasticsearch_monitoring_enabled }}
   exporters:
     id1:
       type: http
