@@ -26,7 +26,7 @@
     - "{{ elasticsearch_config_dir }}"
     - "{{ elasticsearch_data_dir }}"
     - "{{ elasticsearch_certificate_dir }}"
-    - "{{ elasticsearch_snapshot_dir }}"
+    - "{{ elasticsearch_snapshot_dir_host }}"
   register: dir_create
   tags:
     - configuration
