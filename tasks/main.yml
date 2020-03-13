@@ -186,7 +186,7 @@
     method: GET
     url_username: elastic
     url_password: "{{ secrets.elasticsearch.bootstrap.password }}"
-    url: "https://{{ elasticsearch_network_address }}:{{ elasticsearch_network_port }}"
+    url: "https://{{ elasticsearch_network_address }}:{{ elasticsearch_network_port }}/_cluster/health"
     remote_src: True
     return_content: True
     validate_certs: False
