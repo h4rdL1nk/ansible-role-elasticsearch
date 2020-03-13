@@ -177,7 +177,24 @@
     host: "{{ elasticsearch_network_address }}"
     port: "{{ elasticsearch_network_port }}"
     delay: 1
-    timeout: 60
+    timeout: 120
+  tags:
+    - deploy
+
+- name: Check elasticsearch cluster status
+  uri: 
+    method: GET
+    url_username: elastic
+    url_password: "{{ secrets.elasticsearch.bootstrap.password }}"
+    url: "https://{{ elasticsearch_network_address }}:{{ elasticsearch_network_port }}"
+    remote_src: True
+    return_content: True
+    validate_certs: False
+    body_format: json
+  register: cluster_check
+  until: cluster_check.status in [ 200 ] and cluster_check.json.status == "green"
+  delay: 15 
+  retries: 5
   tags:
     - deploy
 
