@@ -195,6 +195,7 @@
   until: cluster_check.status in [ 200 ] and cluster_check.json.status == "green"
   delay: 15 
   retries: 5
+  when: elasticsearch_cluster_check
   tags:
     - deploy
 

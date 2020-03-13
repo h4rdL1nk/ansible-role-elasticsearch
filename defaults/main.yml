@@ -24,6 +24,7 @@ elasticsearch_snapshot_dir_host: /var/dockershared/elasticsearch/snapshots
 elasticsearch_snapshot_dir_dest: /snapshots
 elasticsearch_cluster_name: clustermicro
 elasticsearch_cluster_group: elasticsearch
+elasticsearch_cluster_check: False
 elasticsearch_network_port: 9200
 elasticsearch_network_name: DOCKER_BACKEND
 elasticsearch_license_enabled: false 
