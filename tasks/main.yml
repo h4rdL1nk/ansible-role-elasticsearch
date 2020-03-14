@@ -118,7 +118,7 @@
     method: "{{ item.value.method }}"
     url_username: elastic
     url_password: "{{ secrets.elasticsearch.bootstrap.password }}"
-    url: "https://{{ elasticsearch_network_address }}:{{ elasticsearch_network_port }}/{{ item.value.path }}"
+    url: "{% if elasticsearch_security_http_enabled %}https{% else %}http{% endif %}://{{ elasticsearch_network_address }}:{{ elasticsearch_network_port }}/{{ item.value.path }}"
     remote_src: True
     return_content: True
     validate_certs: False
@@ -186,7 +186,7 @@
     method: GET
     url_username: elastic
     url_password: "{{ secrets.elasticsearch.bootstrap.password }}"
-    url: "https://{{ elasticsearch_network_address }}:{{ elasticsearch_network_port }}/_cluster/health"
+    url: "{% if elasticsearch_security_http_enabled %}https{% else %}http{% endif %}://{{ elasticsearch_network_address }}:{{ elasticsearch_network_port }}/_cluster/health"
     remote_src: True
     return_content: True
     validate_certs: False
@@ -214,7 +214,7 @@
     method: POST
     url_username: elastic
     url_password: "{{ secrets.elasticsearch.bootstrap.password }}"
-    url: "https://{{ elasticsearch_network_address }}:{{ elasticsearch_network_port }}/_security/user/{{ item.key }}/_password"
+    url: "{% if elasticsearch_security_http_enabled %}https{% else %}http{% endif %}://{{ elasticsearch_network_address }}:{{ elasticsearch_network_port }}/_security/user/{{ item.key }}/_password"
     remote_src: True
     return_content: True
     validate_certs: False
@@ -266,7 +266,7 @@
     method: POST
     url_username: elastic
     url_password: "{{ secrets.elasticsearch.users.elastic }}"
-    url: "https://{{ elasticsearch_network_address }}:{{ elasticsearch_network_port }}/_license"
+    url: "{% if elasticsearch_security_http_enabled %}https{% else %}http{% endif %}://{{ elasticsearch_network_address }}:{{ elasticsearch_network_port }}/_license"
     remote_src: True
     return_content: True
     validate_certs: False
