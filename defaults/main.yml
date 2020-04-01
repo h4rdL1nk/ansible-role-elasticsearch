@@ -46,6 +46,7 @@ elasticsearch_secrets_file: vault/secrets.yml
 elasticsearch_pre_restart_actions: false
 elasticsearch_monitoring_enabled: false
 elasticsearch_monitoring_hosts: []
+elasticsearch_metricbeat_monitoring_enabled: false
 
 elasticsearch_lvm_storage_enable: False
 elasticsearch_lvm_storage_pv_devices: []

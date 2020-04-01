@@ -263,6 +263,57 @@
     - configuration
     - license
 
+- name: Enable elasticsearch monitoring collection
+  method: PUT
+    url_username: elastic
+    url_password: "{{ secrets.elasticsearch.users.elastic }}"
+    url: "{% if elasticsearch_security_http_enabled %}https{% else %}http{% endif %}://{{ elasticsearch_network_address }}:{{ elasticsearch_network_port }}/_cluster/settings"
+    remote_src: True
+    return_content: True
+    validate_certs: False
+    body_format: json
+    body: |
+      {
+       "persistent": {
+         "xpack.monitoring.collection.enabled": true
+       }
+      }
+  run_once: True
+  when: elasticsearch_metricbeat_monitoring_enabled
+  register: enable_monitoring_collection 
+  until: enable_monitoring_collection.status in [ 200, 204 ]
+  delay: 3 
+  retries: 5
+  tags:
+    - configuration
+    - monitoring 
+
+- name: Disable elasticsearch default monitoring collection
+  method: PUT
+    url_username: elastic
+    url_password: "{{ secrets.elasticsearch.users.elastic }}"
+    url: "{% if elasticsearch_security_http_enabled %}https{% else %}http{% endif %}://{{ elasticsearch_network_address }}:{{ elasticsearch_network_port }}/_c
+luster/settings"
+    remote_src: True
+    return_content: True
+    validate_certs: False
+    body_format: json
+    body: |
+      {
+       "persistent": {
+         "xpack.monitoring.elasticsearch.collection.enabled": false 
+       }
+      }
+  run_once: True
+  when: elasticsearch_metricbeat_monitoring_enabled
+  register: disable_default_monitoring_collection 
+  until: disable_default_monitoring_collection.status in [ 200, 204 ]
+  delay: 3 
+  retries: 5
+  tags:
+    - configuration
+    - monitoring 
+
 - name: Apply license
   uri:
     method: POST
