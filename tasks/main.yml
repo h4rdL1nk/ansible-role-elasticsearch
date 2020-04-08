@@ -247,8 +247,8 @@
 
 - include_tasks: elastic_users.yml
   vars:
-    users_definition_file: "{{ role_path }}/files/users/definition.yml"
-    roles_definition_file: "{{ role_path }}/files/roles/definition.yml"
+    users_definition_file: "{{ elasticsearch_users_file | default(role_path + '/files/users/definition.yml') }}"
+    roles_definition_file: "{{ elasticsearch_roles_file | default(role_path + '/files/roles/definition.yml') }}"
   when: elasticsearch_users_create
   tags:
     - configuration

@@ -83,3 +83,8 @@ roles:
       metadata:
         version: 1
 
+  - api_monitoring:
+      cluster:
+        - monitor
+      metadata:
+        version: 1

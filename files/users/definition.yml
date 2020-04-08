@@ -48,3 +48,8 @@ users:
         - remote_monitoring_agent
       full_name: ES remote monitoring
 
+  - api_monitoring:
+      password: 4p1M0n1t0R
+      roles:
+        - api_monitoring
+      full_name: API monitoring user ( kibana / elasticsearch )
