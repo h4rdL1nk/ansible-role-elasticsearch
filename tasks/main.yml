@@ -105,7 +105,7 @@
   command: "docker run --rm -i -v {{ elasticsearch_config_dir }}:/usr/share/elasticsearch/config:rw,Z -v {{ elasticsearch_config_dir }}/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z {{ elasticsearch_docker_image }}:{{ elasticsearch_docker_tag   }} elasticsearch-keystore add --stdin {{ item.key }}"
   args:
     stdin: "{{ item.value }}"
-  with_dict: "{{ secrets.elasticsearch.keystore }}"
+  with_dict: "{{ secrets.elasticsearch_keystore_keys }}"
   when: keystore_create.changed
   register: keystore_write
   tags:
