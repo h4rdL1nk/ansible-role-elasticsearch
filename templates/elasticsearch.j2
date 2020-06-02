@@ -4,13 +4,14 @@ cluster:
   routing:
     allocation:
       disk:
+        threshold_enabled: {{ elasticsearch_cluster_routing_allocation_disk_threshold_enabled }}
         watermark:
-          low: 5gb
-          high: 2gb
-          flood_stage: 1gb
+          low: {{ elasticsearch_cluster_routing_allocation_disk_watermark_low }}
+          high: {{ elasticsearch_cluster_routing_allocation_disk_watermark_high }}
+          flood_stage: {{ elasticsearch_cluster_routing_allocation_disk_watermark_flood }}
   info:
     update:
-      interval: 1m
+      interval: {{ elasticsearch_cluster_info_update_interval }}
 
 network:
   publish_host: {{ elasticsearch_network_address }}

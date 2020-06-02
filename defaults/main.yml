@@ -55,6 +55,12 @@ elasticsearch_lvm_storage_vg_name: elasticsearch
 elasticsearch_lvm_storage_lv_name: data
 elasticsearch_lvm_storage_lv_size: 100%FREE
 
+elasticsearch_cluster_info_update_interval: 1m
+elasticsearch_cluster_routing_allocation_disk_threshold_enabled: true
+elasticsearch_cluster_routing_allocation_disk_watermark_low: 85%
+elasticsearch_cluster_routing_allocation_disk_watermark_high: 90%
+elasticsearch_cluster_routing_allocation_disk_watermark_flood: 95%
+
 pre_restart_actions:
   disable_routing:
     method: PUT
