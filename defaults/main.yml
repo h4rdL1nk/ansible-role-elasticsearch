@@ -13,9 +13,8 @@ elasticsearch_cluster_hostnames: []
 elasticsearch_security_enabled: true
 elasticsearch_security_transport_enabled: true
 elasticsearch_security_http_enabled: true
-elasticsearch_security_auth_ldap_hosts:
-  - "ldap://replicahi.hi.inet:389"
-elasticsearch_security_auth_ldap_base_dn: "o=TID"
+elasticsearch_security_auth_ldap_hosts: []
+elasticsearch_security_auth_ldap_base_dn: "o=dummy"
 elasticsearch_security_auth_ldap_role_mapping_unmapped_groups_as_roles: 'false'
 elasticsearch_security_auth_ldap_role_mapping_file: /usr/share/elasticsearch/config/role_mapping.yml
 elasticsearch_security_truststore_enabled: false
