@@ -48,6 +48,8 @@ elasticsearch_monitoring_enabled: false
 elasticsearch_monitoring_hosts: []
 elasticsearch_metricbeat_monitoring_enabled: false
 
+elasticsearch_index_unassigned_node_left_delayed_timeout: 5m
+
 elasticsearch_lvm_storage_enable: False
 elasticsearch_lvm_storage_pv_devices: []
 elasticsearch_lvm_storage_pv_pesize: 32
