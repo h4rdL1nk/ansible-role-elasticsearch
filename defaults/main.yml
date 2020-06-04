@@ -2,6 +2,7 @@
 
 elasticsearch_docker_image: registry.smartdigits.io/infra/elasticsearch
 elasticsearch_docker_tag: 7.2.0
+elasticsearch_docker_api_version: 1.22
 elasticsearch_docker_container_user_uid: 1000
 elasticsearch_docker_container_group_uid: 1000
 elasticsearch_docker_container_memory: 4096
