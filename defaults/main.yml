@@ -11,6 +11,7 @@ elasticsearch_docker_container_cpu_count: 1
 elasticsearch_cluster_network_addresses: []
 elasticsearch_cluster_hostnames: []
 elasticsearch_security_enabled: true
+elasticsearch_security_ldap_enabled: false
 elasticsearch_security_transport_enabled: true
 elasticsearch_security_http_enabled: true
 elasticsearch_security_auth_ldap_hosts: []
