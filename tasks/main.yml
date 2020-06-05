@@ -134,7 +134,7 @@
 
 - name: Deploy elasticsearch containers
   docker_container:
-    api_version: {{ elasticsearch_docker_api_version }}
+    api_version: "{{ elasticsearch_docker_api_version }}"
     state: started
     restart: "{{ (copy_certs is defined and copy_certs.changed) or ( es_config is defined and es_config.changed) or ( keystore_create is defined and keystore_create.changed) or (kernel_params is defined and kernel_params.changed) or (kestore_write is defined and keystore_write.changed) }}"
     name: "smd_infra_elastic"
